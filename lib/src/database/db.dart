@@ -105,8 +105,20 @@ class Db {
   ///     var db = new Db('mongodb://127.0.0.1/testdb');
   /// And that code direct to MongoLab server on 37637 port, database *testdb*, username *dart*, password *test*
   ///     var db = new Db('mongodb://dart:test@ds037637-a.mongolab.com:37637/objectory_blog');
-  Db(String uriString, [this._debugInfo]) {
+  Db(String uriString, [this._debugInfo, Logger logger]) {
     _uriList.add(uriString);
+    if(logger != null){
+      Timer.periodic(Duration(seconds: 10), (t){
+        int port;
+        Map openReplies;
+        try{
+          port = _connectionManager?._masterConnection?.socket?.remotePort;
+          openReplies = _connectionManager?.replyCompleters;
+        }finally {
+          logger.warning("${this}: Master Remote Port $port, Pending Replies: ${openReplies?.length}");
+        }
+      });
+    }
   }
 
   Db.pool(List<String> uriList, [this._debugInfo]) {
