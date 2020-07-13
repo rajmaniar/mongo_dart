@@ -114,8 +114,18 @@ class Db {
         try{
           port = _connectionManager?._masterConnection?.socket?.port;
           openReplies = _connectionManager?.replyCompleters;
-        }finally {
-          logger.warning("${this}: Master Remote Port $port, Pending Replies: ${openReplies?.length}");
+        } finally {
+          if(openReplies.isNotEmpty) {
+            int pendingQueryCount = 0;
+            String pendingQueries = "";
+            _connectionManager?._masterConnection?._pendingRequestsDebugger?.forEach((key, value) {
+              if(value is MongoQueryMessage){
+                pendingQueryCount++;
+                pendingQueries += "${value.collectionNameBson.value}: ${value._query.data} |";
+              }
+            });
+            logger.warning("${this}: Master Remote Port $port, Pending Replies: ${openReplies?.length}, Queries($pendingQueryCount): $pendingQueries");
+          }
         }
       });
     }
