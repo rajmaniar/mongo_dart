@@ -112,7 +112,7 @@ class Db {
         int port;
         Map openReplies;
         try{
-          port = _connectionManager?._masterConnection?.socket?.remotePort;
+          port = _connectionManager?._masterConnection?.socket?.port;
           openReplies = _connectionManager?.replyCompleters;
         }finally {
           logger.warning("${this}: Master Remote Port $port, Pending Replies: ${openReplies?.length}");
