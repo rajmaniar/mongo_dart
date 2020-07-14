@@ -119,10 +119,10 @@ class Db {
             int pendingQueryCount = 0;
             var pendingQueries = <String>[];
             var p = <String>[];
-            _connectionManager?._masterConnection?._pendingRequestsDebugger?.toList()?.reversed?.forEach((value) {
+            _connectionManager?._masterConnection?._pendingRequestsDebugger?.forEach((value) {
               if(value is MongoQueryMessage){
                 pendingQueryCount++;
-                p.add(" ${value.collectionNameBson.value} (${value._requestId}): ${value._query.data} |");
+                p.add(" ${value.collectionNameBson.value} (${value._requestId}): ${value._query.data}");
                 if(p.length > 10){
                   pendingQueries.add(p.toString());
                   p.clear();
