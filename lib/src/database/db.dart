@@ -107,7 +107,6 @@ class Db {
   ///     var db = new Db('mongodb://dart:test@ds037637-a.mongolab.com:37637/objectory_blog');
   Db(String uriString, [this._debugInfo, Logger logger]) {
     _uriList.add(uriString);
-    logger.warning("****DEBUG INFO: ${this} -- ${this._debugInfo}");
     if(logger != null){
       Timer.periodic(Duration(seconds: 10), (t){
         int port;
@@ -118,14 +117,24 @@ class Db {
         } finally {
           if(openReplies.isNotEmpty) {
             int pendingQueryCount = 0;
-            String pendingQueries = "";
-            _connectionManager?._masterConnection?._pendingRequestsDebugger?.forEach((value) {
+            var pendingQueries = <String>[];
+            _connectionManager?._masterConnection?._pendingRequestsDebugger?.toList()?.reversed?.forEach((value) {
+              var p = <String>[];
               if(value is MongoQueryMessage){
                 pendingQueryCount++;
-                pendingQueries += " ${value.collectionNameBson.value}: ${value._query.data} |";
+                p.add(" ${value.collectionNameBson.value}: ${value._query.data} |");
+                if(p.length > 10){
+                  pendingQueries.add(p.toString());
+                  p.clear();
+                }
               }
             });
-            logger.warning("${this}: Master Remote Port $port, Pending Replies: ${openReplies?.length}, Queries($pendingQueryCount):$pendingQueries");
+            var batch = 0;
+            var rand = Random().nextInt(1024);
+            pendingQueries.forEach(
+                    (p)=>logger.warning("${this}($rand - ${batch++}): Master Remote Port $port, Pending Replies: ${openReplies?.length}, Queries($pendingQueryCount):$p")
+            );
+
           }
         }
       });
