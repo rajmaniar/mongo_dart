@@ -35,7 +35,7 @@ class _Connection {
   Set<int> _pendingQueries = Set();
   Map<int, Completer<MongoReplyMessage>> get _replyCompleters =>
       _manager.replyCompleters;
-  final Map<int, MongoMessage> _pendingRequestsDebugger = <int, MongoMessage>{};
+  final Set<MongoMessage> _pendingRequestsDebugger = Set<MongoMessage>();
   Queue<MongoMessage> get _sendQueue => _manager.sendQueue;
   StreamSubscription<MongoReplyMessage> _repliesSubscription;
   StreamSubscription<MongoReplyMessage> get repliesSubscription =>
@@ -103,7 +103,7 @@ class _Connection {
       _log.fine(() => 'Query $queryMessage');
       _sendQueue.addLast(queryMessage);
       _sendBuffer();
-      _pendingRequestsDebugger[queryMessage.requestId] = queryMessage;
+      _pendingRequestsDebugger.add(queryMessage);
     } else {
       completer.completeError(const ConnectionException(
           "Invalid state: Connection already closed."));
@@ -140,7 +140,7 @@ class _Connection {
         _log.info(() => "Unexpected respondTo: ${reply.responseTo} $reply");
       }
     }
-    _pendingRequestsDebugger.remove(reply.responseTo);
+    _pendingRequestsDebugger.removeWhere((r)=>r._requestId == reply.responseTo);
   }
 
   void _onSocketError() {
