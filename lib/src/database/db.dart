@@ -118,8 +118,8 @@ class Db {
           if(openReplies.isNotEmpty) {
             int pendingQueryCount = 0;
             var pendingQueries = <String>[];
+            var p = <String>[];
             _connectionManager?._masterConnection?._pendingRequestsDebugger?.toList()?.reversed?.forEach((value) {
-              var p = <String>[];
               if(value is MongoQueryMessage){
                 pendingQueryCount++;
                 p.add(" ${value.collectionNameBson.value}: ${value._query.data} |");
@@ -129,6 +129,8 @@ class Db {
                 }
               }
             });
+            if(p.isNotEmpty)
+              pendingQueries.add(p.toString());
             var batch = 0;
             var rand = Random().nextInt(1024);
             pendingQueries.forEach(
