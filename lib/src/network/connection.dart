@@ -60,6 +60,15 @@ class _Connection {
       _repliesSubscription =
           MongoMessageHandler().transformer.bind(socket).listen(_receiveReply,
               onError: (e, st) {
+              if(e is OutOfMemoryError){
+                _log.severe("Out Of Memory caught: ${_manager.db}, state: ${_manager.db.state} -- $st");
+                _pendingRequestsDebugger?.forEach((value) {
+                  if(value is MongoQueryMessage)
+                    _log.severe("Out Of Memory Pending Trace: ${value.collectionNameBson.value} (${value._requestId}): ${value._query.data}");
+                  else
+                    _log.severe("Out Of Memory Pending Trace: $value");
+                });
+              }
                 _log.severe("Socket error ${e} ${st}");
                 //completer.completeError(e);
                 if (!_closed) {

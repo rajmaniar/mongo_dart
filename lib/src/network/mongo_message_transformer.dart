@@ -5,13 +5,17 @@ class MongoMessageHandler {
   final converter = PacketConverter();
 
   void handleData(List<int> data, EventSink<MongoReplyMessage> sink) {
-    converter.addPacket(data);
-    while (!converter.messages.isEmpty) {
-      var buffer = BsonBinary.from(converter.messages.removeFirst());
-      MongoReplyMessage reply = MongoReplyMessage();
-      reply.deserialize(buffer);
-      _log.fine(() => reply.toString());
-      sink.add(reply);
+    try {
+      converter.addPacket(data);
+      while (!converter.messages.isEmpty) {
+        var buffer = BsonBinary.from(converter.messages.removeFirst());
+        MongoReplyMessage reply = MongoReplyMessage();
+        reply.deserialize(buffer);
+        _log.fine(() => reply.toString());
+        sink.add(reply);
+      }
+    } on OutOfMemoryError catch(e,st) {
+      sink.addError(e, st);
     }
   }
 

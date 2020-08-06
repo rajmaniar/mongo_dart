@@ -107,40 +107,40 @@ class Db {
   ///     var db = new Db('mongodb://dart:test@ds037637-a.mongolab.com:37637/objectory_blog');
   Db(String uriString, [this._debugInfo, Logger logger]) {
     _uriList.add(uriString);
-    if(logger != null){
-      Timer.periodic(Duration(seconds: 10), (t){
-        int port;
-        Map openReplies;
-        try{
-          port = _connectionManager?._masterConnection?.socket?.port;
-          openReplies = _connectionManager?.replyCompleters;
-        } finally {
-          if(openReplies.isNotEmpty) {
-            int pendingQueryCount = 0;
-            var pendingQueries = <String>[];
-            var p = <String>[];
-            _connectionManager?._masterConnection?._pendingRequestsDebugger?.forEach((value) {
-              if(value is MongoQueryMessage){
-                pendingQueryCount++;
-                p.add(" ${value.collectionNameBson.value} (${value._requestId}): ${value._query.data}");
-                if(p.length > 10){
-                  pendingQueries.add(p.toString());
-                  p.clear();
-                }
-              }
-            });
-            if(p.isNotEmpty)
-              pendingQueries.add(p.toString());
-            var batch = 0;
-            var rand = Random().nextInt(1024);
-            pendingQueries.forEach(
-                    (p)=>logger.warning("${this}($rand - ${batch++}): Master Remote Port $port, Pending Replies: ${openReplies?.length}, Queries($pendingQueryCount):$p")
-            );
-
-          }
-        }
-      });
-    }
+//    if(logger != null){
+//      Timer.periodic(Duration(seconds: 10), (t){
+//        int port;
+//        Map openReplies;
+//        try{
+//          port = _connectionManager?._masterConnection?.socket?.port;
+//          openReplies = _connectionManager?.replyCompleters;
+//        } finally {
+//          if(openReplies.isNotEmpty) {
+//            int pendingQueryCount = 0;
+//            var pendingQueries = <String>[];
+//            var p = <String>[];
+//            _connectionManager?._masterConnection?._pendingRequestsDebugger?.forEach((value) {
+//              if(value is MongoQueryMessage){
+//                pendingQueryCount++;
+//                p.add(" ${value.collectionNameBson.value} (${value._requestId}): ${value._query.data}");
+//                if(p.length > 10){
+//                  pendingQueries.add(p.toString());
+//                  p.clear();
+//                }
+//              }
+//            });
+//            if(p.isNotEmpty)
+//              pendingQueries.add(p.toString());
+//            var batch = 0;
+//            var rand = Random().nextInt(1024);
+//            pendingQueries.forEach(
+//                    (p)=>logger.warning("${this}($rand - ${batch++}): Master Remote Port $port, Pending Replies: ${openReplies?.length}, Queries($pendingQueryCount):$p")
+//            );
+//
+//          }
+//        }
+//      });
+//    }
   }
 
   Db.pool(List<String> uriList, [this._debugInfo]) {
