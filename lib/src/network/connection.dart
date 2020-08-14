@@ -68,6 +68,7 @@ class _Connection {
                   else
                     _log.severe("Out Of Memory Pending Trace: $value");
                 });
+                throw e;
               }
                 _log.severe("Socket error ${e} ${st}");
                 //completer.completeError(e);
