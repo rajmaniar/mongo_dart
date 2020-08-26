@@ -64,11 +64,10 @@ class _Connection {
                 _log.severe("Out Of Memory caught: ${_manager.db}, state: ${_manager.db.state} -- $st");
                 _pendingRequestsDebugger?.forEach((value) {
                   if(value is MongoQueryMessage)
-                    _log.severe("Out Of Memory Pending Trace: ${value.collectionNameBson.value} (${value._requestId}): ${value._query.data}");
+                    _log.severe("Out Of Memory Pending Trace: ${value.collectionNameBson.value} (${value._requestId}): ${value._fields?.data} from ${value._query.data}");
                   else
                     _log.severe("Out Of Memory Pending Trace: $value");
                 });
-                throw e;
               }
                 _log.severe("Socket error ${e} ${st}");
                 //completer.completeError(e);
